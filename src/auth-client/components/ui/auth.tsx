@@ -56,7 +56,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const logout = useCallback(async () => {
         try {
-            await router.prefetch('/login')
+            router.prefetch('/login')
             setToken(null)
             setRefreshToken(null)
             removeSessionStorage('token')
@@ -72,7 +72,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const register = async (userData: any) => {
         try {
-            await router.prefetch('/login')
+            router.prefetch('/login')
             axiosInstance.post('/auth/register', {
                 userData
             }).then((res) => {
