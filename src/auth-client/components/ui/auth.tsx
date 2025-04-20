@@ -26,6 +26,7 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const router = useRouter()
+    const pathname = usePathname()
 
     if (router.prefetch('/login') === undefined) {
         throw new Error('The /login route must exist.')
@@ -167,8 +168,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     useEffect(() => {
         const initializeAuth = async () => { // checks local and session storage for tokens and sets them in the context
-
-            const pathname = usePathname()
             if (pathname === '/404' || pathname === '/500') {
                 return // do not check authentication on error pages
             }
