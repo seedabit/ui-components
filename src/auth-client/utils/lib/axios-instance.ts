@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const url: string | undefined = process.env.NEXT_PUBLIC_DEV_API_URL
 if (!url) {
-    throw new Error('NEXT_PUBLIC_DEV_API_URL is not defined')
+    throw new Error('NEXT_PUBLIC_DEV_API_URL isn\'t defined for axios instance')
 }
 
 const axiosInstance = axios.create({
