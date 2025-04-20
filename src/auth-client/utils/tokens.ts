@@ -1,7 +1,10 @@
 import { axiosInstance } from '@/utils/lib/axios-instance'
 
+const tokenAPIRoute: string = '/auth/token' // API route for token validation
+const refreshTokenAPIRoute: string = '/auth/refresh' // API route for refreshing tokens
+
 async function checkToken(): Promise<boolean> {
-    return await axiosInstance.get('/auth/token').then((/* res */) => {
+    return await axiosInstance.get(tokenAPIRoute).then((/* res */) => {
         return true
     }).catch(() => {
         return false
@@ -10,7 +13,7 @@ async function checkToken(): Promise<boolean> {
 
 async function refreshTokens(): Promise<string[]> {
     try {
-        const res = await axiosInstance.get('/auth/refresh')
+        const res = await axiosInstance.get(refreshTokenAPIRoute)
         const { token, refreshToken } = res.data
 
         return [token, refreshToken]
