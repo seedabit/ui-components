@@ -2,10 +2,10 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { axiosInstance, clearTokens, setTokens, setRefreshToken as setRefreshTokenToHeaders } from './utils/lib/axios-instance'
-import { checkToken, refreshTokens } from './services/tokens'
-import { getSessionStorage, removeSessionStorage, setSessionStorage } from './utils/session-storage'
-import { setLocalStorage, getLocalStorage, removeLocalStorage } from './utils/local-storage'
+import { clearTokens, setTokens, setRefreshToken as setRefreshTokenToHeaders, axiosInstance } from '@/utils/lib/axios-instance'
+import { checkToken, refreshTokens } from '@/utils/tokens'
+import { getSessionStorage, removeSessionStorage, setSessionStorage } from '@/utils/session-storage'
+import { setLocalStorage, getLocalStorage, removeLocalStorage } from '@/utils/local-storage'
 
 interface AuthContextData {
     token: string | null

@@ -1,4 +1,4 @@
-import { axiosInstance } from '../utils/lib/axios-instance'
+import { axiosInstance } from '@/utils/lib/axios-instance'
 
 async function checkToken(): Promise<boolean> {
     return await axiosInstance.get('/auth/token').then((/* res */) => {
