@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { clearTokens, setTokens, setRefreshToken as setRefreshTokenToHeaders, axiosInstance } from '@/utils/lib/axios-instance'
 import { checkToken, refreshTokens } from '@/utils/tokens'
 import { getSessionStorage, removeSessionStorage, setSessionStorage } from '@/utils/session-storage'
@@ -26,6 +26,11 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const router = useRouter()
+    const pathname = usePathname()
+
+    if (router.prefetch('/login') === undefined) {
+        throw new Error('The /login route must exist.')
+    }
 
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
     const [token, setTokenState] = useState<string | null>(null)
@@ -49,33 +54,43 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
     }
 
-    const logout = useCallback(() => {
-        setToken(null)
-        setRefreshToken(null)
-        removeSessionStorage('token')
-        removeSessionStorage('refreshToken')
-        removeLocalStorage('refreshToken')
-        clearTokens()
-        setIsAuthenticated(false)
-        router.push('/login')
+    const logout = useCallback(async () => {
+        try {
+            await router.prefetch('/login')
+            setToken(null)
+            setRefreshToken(null)
+            removeSessionStorage('token')
+            removeSessionStorage('refreshToken')
+            removeLocalStorage('refreshToken')
+            clearTokens()
+            setIsAuthenticated(false)
+            router.push('/login')
+        } catch {
+            console.error('The /login route does not exist.')
+        }
     }, [router])
 
     const register = async (userData: any) => {
-        axiosInstance.post('/auth/register', {
-            userData
-        }).then((res) => {
-            // toast({
-            //     description: res.data.message
-            // })
-            setTimeout(() => {
-                router.push('/login')
-            }, 1000)
-        }).catch((error) => {
-            // toast({
-            //     variant: 'destructive',
-            //     description: error.response?.data?.error || 'Um erro inesperado ocorreu, tente novamente mais tarde.'
-            // })
-        })
+        try {
+            await router.prefetch('/login')
+            axiosInstance.post('/auth/register', {
+                userData
+            }).then((res) => {
+                // toast({
+                //     description: res.data.message
+                // })
+                setTimeout(() => {
+                    router.push('/login')
+                }, 1000)
+            }).catch((error) => {
+                // toast({
+                //     variant: 'destructive',
+                //     description: error.response?.data?.error || 'Um erro inesperado ocorreu, tente novamente mais tarde.'
+                // })
+            })
+        } catch {
+            console.error('The /login route does not exist.')
+        }
     }
 
     const login = async (email: string, password: string, rememberMe: boolean = false) => {
@@ -153,6 +168,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     useEffect(() => {
         const initializeAuth = async () => { // checks local and session storage for tokens and sets them in the context
+            if (pathname === '/404' || pathname === '/500') {
+                return // do not check authentication on error pages
+            }
+
             try {
                 const tokens = await checkRememberMe() // check if the remember me token is valid and refresh it if necessary
                 if (tokens) { // successfully refreshed remember-me tokens
