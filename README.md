@@ -18,12 +18,15 @@ The components in this repository are not meant to be used directly. Instead, th
 
 ### Getting Started
 
-1. **Install the CLI**: Ensure you have the company's CLI installed on your system. Refer to the CLI documentation for installation instructions.
+1. **Install the CLI**: Ensure you are using the Seed a Bit CLI, the command-line interface for managing your projects. You can run it using `npx`:
+   ```bash
+   npx @seed-a-bit/cli
+   ```
 2. **Import Components**: Use the CLI to import the desired components into your project. For example:
    ```bash
-   company-cli add component-name
+   npx @seed-a-bit/cli add <component-name>
    ```
-3. **Customize Components**: Once imported, you can customize the components as needed to fit your project requirements. Refer to the documentation for each component for details on customization options.
+3. **Customize Components**: Once imported, you can customize the components as needed to fit your project requirements. Refer to the [documentation](https://guia.seedabit.org.br/cli/introduction) for each component for details on customization options.
 
 ### Example Workflow
 
@@ -34,7 +37,7 @@ Here’s an example of how you might use the CLI to add a component to your proj
    npx @seed-a-bit/cli add button
    ```
 
-2. The CLI will automatically set up the component in your project, including any necessary dependencies, configurations and directories.
+2. The CLI will automatically set up the component in your project, including any necessary dependencies, configurations and correct directories.
 
 3. Import and use the component in your code:
    ```tsx
