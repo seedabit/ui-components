@@ -7,6 +7,12 @@ import { checkToken, refreshTokens } from '@/utils/tokens'
 import { getSessionStorage, removeSessionStorage, setSessionStorage } from '@/utils/session-storage'
 import { setLocalStorage, getLocalStorage, removeLocalStorage } from '@/utils/local-storage'
 
+const loginRoute: string = '/login'
+const mainPageRoute: string = '/home' // page the user will be redirected to after successful login
+
+const registerAPIRoute: string = '/auth/register' // API route for registration
+const loginAPIRoute: string = '/auth/login' // API route for login
+
 interface AuthContextData {
     token: string | null
     setToken: (token: string | null) => void
@@ -17,19 +23,17 @@ interface AuthContextData {
     login: (email: string, password: string, rememberMe: boolean) => void
     logout: () => void
 }
-
 const AuthContext = createContext<AuthContextData | undefined>(undefined)
 
 interface AuthProviderProps {
     children: ReactNode
 }
-
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const router = useRouter()
     const pathname = usePathname()
 
-    if (router.prefetch('/login') === undefined) {
-        throw new Error('The /login route must exist.')
+    if (router.prefetch(loginRoute) === undefined) {
+        throw new Error('The login route must exist.')
     }
 
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
@@ -56,7 +60,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const logout = useCallback(async () => {
         try {
-            await router.prefetch('/login')
+            router.prefetch(loginRoute)
             setToken(null)
             setRefreshToken(null)
             removeSessionStorage('token')
@@ -64,23 +68,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             removeLocalStorage('refreshToken')
             clearTokens()
             setIsAuthenticated(false)
-            router.push('/login')
+            router.push(loginRoute)
         } catch {
-            console.error('The /login route does not exist.')
+            console.error('The login route does not exist.')
         }
     }, [router])
 
     const register = async (userData: any) => {
         try {
-            await router.prefetch('/login')
-            axiosInstance.post('/auth/register', {
+            router.prefetch(loginRoute)
+            axiosInstance.post(registerAPIRoute, {
                 userData
             }).then((res) => {
                 // toast({
                 //     description: res.data.message
                 // })
                 setTimeout(() => {
-                    router.push('/login')
+                    router.push(loginRoute)
                 }, 1000)
             }).catch((error) => {
                 // toast({
@@ -89,12 +93,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 // })
             })
         } catch {
-            console.error('The /login route does not exist.')
+            console.error('The defined login route does not exist.')
         }
     }
 
     const login = async (email: string, password: string, rememberMe: boolean = false) => {
-        axiosInstance.post('/auth/login', {
+        axiosInstance.post(loginAPIRoute, {
             email: email,
             password: password,
         }).then((response) => {
@@ -110,7 +114,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             } else {
                 removeLocalStorage('refreshToken')
             }
-            router.push('/home')
+            router.push(mainPageRoute)
         }).catch((error) => {
             if (error.response?.status === 404) {
                 // toast({
