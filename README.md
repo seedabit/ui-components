@@ -63,7 +63,7 @@ All contributions must adhere to the defined rules and guidelines, if you’d li
 
 ## License
 
-This project is licensed under your [License](LICENSE).
+This project is licensed under our [License](LICENSE).
 
 ## Acknowledgments
 
